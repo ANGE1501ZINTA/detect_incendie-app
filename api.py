@@ -1,6 +1,5 @@
 from fastapi import FastAPI, File, UploadFile, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
 import torch
 import torch.nn.functional as F
 from torchvision import transforms
@@ -9,6 +8,9 @@ import io
 import base64
 from model import CNN_Bottleneck
 
+# -----------------------
+# INIT FASTAPI
+# -----------------------
 app = FastAPI(
     title="Fire Detection API",
     description="API de détection d'incendie par Deep Learning",
@@ -66,16 +68,18 @@ async def home():
         }
     }
 
+@app.get("/health")
+async def health():
+    """Vérifier l'état de santé de l'API"""
+    return {
+        "status": "healthy",
+        "model_loaded": model is not None
+    }
+
 @app.post("/predict")
 async def predict(image: UploadFile = File(...)):
     """
     Endpoint de prédiction pour la détection d'incendie.
-    
-    Args:
-        image: Fichier image (JPG, PNG)
-    
-    Returns:
-        JSON avec la prédiction, confiance et probabilités
     """
     try:
         # Vérifier le type de fichier
@@ -101,8 +105,8 @@ async def predict(image: UploadFile = File(...)):
         confidence_value = float(confidence.item())
         prediction = int(pred.item())
         
-        # Déterminer le statut avec messages nuancés
-        if prediction == 0:  # Fire détecté
+        # Statut + messages nuancés
+        if prediction == 0:  # Fire
             if confidence_value >= 0.8:
                 status = "fire_detected"
                 message = "🔥 Incendie détecté avec forte certitude ! Évacuation immédiate recommandée."
@@ -152,18 +156,3 @@ async def predict(image: UploadFile = File(...)):
             status_code=500,
             detail=f"Erreur lors de la prédiction: {str(e)}"
         )
-
-@app.get("/health")
-async def health():
-    """Vérifier l'état de santé de l'API"""
-    return {
-        "status": "healthy",
-        "model_loaded": model is not None
-    }
-
-# -----------------------
-# RUN
-# -----------------------
-if __name__ == '__main__':
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=5000)
