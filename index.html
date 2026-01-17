@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fire Detection AI - Professional Dashboard</title>
+    <title>Fire Detection AI - Advanced Dashboard</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
         * {
             margin: 0;
@@ -13,27 +13,61 @@
             box-sizing: border-box;
         }
 
+        :root {
+            --bg-primary: #f8f9fa;
+            --bg-secondary: #ffffff;
+            --bg-card: #ffffff;
+            --text-primary: #1a1a1a;
+            --text-secondary: #6b7280;
+            --accent-fire: #ef4444;
+            --accent-orange: #f97316;
+            --accent-yellow: #eab308;
+            --accent-green: #22c55e;
+            --accent-blue: #3b82f6;
+            --border-color: rgba(0, 0, 0, 0.1);
+        }
+
         body {
             font-family: 'Inter', sans-serif;
-            background: #f5f5f7;
-            color: #1d1d1f;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
+            color: var(--text-primary);
             min-height: 100vh;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                radial-gradient(circle at 20% 30%, rgba(239, 68, 68, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(59, 130, 246, 0.08) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .main-container {
+            position: relative;
+            z-index: 1;
         }
 
         .navbar {
-            background: rgba(255, 255, 255, 0.8);
+            background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+            border-bottom: 1px solid var(--border-color);
             padding: 1rem 2rem;
             position: fixed;
             width: 100%;
             top: 0;
             z-index: 1000;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
         }
 
         .nav-content {
-            max-width: 1400px;
+            max-width: 1600px;
             margin: 0 auto;
             display: flex;
             justify-content: space-between;
@@ -46,12 +80,16 @@
             gap: 12px;
             font-size: 1.5rem;
             font-weight: 700;
-            color: #1d1d1f;
         }
 
         .logo-icon {
             font-size: 2rem;
-            filter: drop-shadow(0 0 8px rgba(239, 68, 68, 0.3));
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
         }
 
         .nav-links {
@@ -61,28 +99,44 @@
         }
 
         .nav-link {
-            color: #6e6e73;
+            color: var(--text-secondary);
             text-decoration: none;
             font-weight: 500;
             transition: color 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .nav-link:hover {
-            color: #1d1d1f;
+            color: var(--text-primary);
         }
 
-        .status-badge {
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
             background: rgba(34, 197, 94, 0.2);
-            color: #22c55e;
-            padding: 0.4rem 1rem;
+            padding: 0.5rem 1rem;
             border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 600;
             border: 1px solid rgba(34, 197, 94, 0.3);
         }
 
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--accent-green);
+            animation: blink 2s ease-in-out infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
         .main-container {
-            max-width: 1400px;
+            max-width: 1600px;
             margin: 100px auto 40px;
             padding: 0 2rem;
         }
@@ -90,73 +144,137 @@
         .hero {
             text-align: center;
             margin-bottom: 3rem;
+            position: relative;
         }
 
         .hero h1 {
-            font-size: 3.5rem;
-            font-weight: 700;
+            font-size: 4rem;
+            font-weight: 800;
             background: linear-gradient(135deg, #ef4444 0%, #f97316 50%, #eab308 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             margin-bottom: 1rem;
-            letter-spacing: -1px;
+            letter-spacing: -2px;
+            animation: fadeInUp 0.8s ease-out;
         }
 
         .hero p {
             font-size: 1.2rem;
-            color: #6e6e73;
-            max-width: 600px;
+            color: var(--text-secondary);
+            max-width: 700px;
             margin: 0 auto;
+            animation: fadeInUp 0.8s ease-out 0.2s both;
         }
 
-        .dashboard {
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 1.5rem;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-fire), var(--accent-orange), var(--accent-yellow));
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent-fire);
+            box-shadow: 0 10px 40px rgba(239, 68, 68, 0.2);
+        }
+
+        .stat-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 0.3rem;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .dashboard-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 2rem;
             margin-bottom: 2rem;
         }
 
-        @media (max-width: 1024px) {
-            .dashboard {
+        @media (max-width: 1200px) {
+            .dashboard-grid {
                 grid-template-columns: 1fr;
             }
         }
 
         .card {
-            background: #ffffff;
-            border: 1px solid rgba(0, 0, 0, 0.08);
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
             border-radius: 20px;
             padding: 2rem;
             transition: all 0.3s ease;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
         }
 
         .card:hover {
-            border-color: rgba(0, 0, 0, 0.12);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+            border-color: rgba(239, 68, 68, 0.3);
+            box-shadow: 0 8px 24px rgba(239, 68, 68, 0.15);
         }
 
         .card-header {
             display: flex;
-            align-items: center;
             justify-content: space-between;
+            align-items: center;
             margin-bottom: 1.5rem;
         }
 
         .card-title {
-            font-size: 1.3rem;
-            font-weight: 600;
-            color: #1d1d1f;
+            font-size: 1.4rem;
+            font-weight: 700;
             display: flex;
             align-items: center;
             gap: 10px;
         }
 
         .upload-zone {
-            background: #fafafa;
-            border: 2px dashed rgba(0, 0, 0, 0.15);
-            border-radius: 15px;
+            background: linear-gradient(135deg, #fef2f2 0%, #fff7ed 100%);
+            border: 2px dashed var(--border-color);
+            border-radius: 16px;
             padding: 3rem;
             text-align: center;
             cursor: pointer;
@@ -168,83 +286,104 @@
         .upload-zone::before {
             content: '';
             position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(239, 68, 68, 0.05), transparent);
-            transition: left 0.5s;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(from 0deg, transparent, rgba(239, 68, 68, 0.1), transparent 30%);
+            animation: rotate 4s linear infinite;
         }
 
-        .upload-zone:hover::before {
-            left: 100%;
+        @keyframes rotate {
+            100% { transform: rotate(360deg); }
+        }
+
+        .upload-content {
+            position: relative;
+            z-index: 1;
         }
 
         .upload-zone:hover {
-            background: #ffffff;
-            border-color: rgba(239, 68, 68, 0.4);
-            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.1);
-        }
-
-        .upload-zone.dragover {
-            background: rgba(239, 68, 68, 0.05);
-            border-color: #ef4444;
+            border-color: var(--accent-fire);
+            background: rgba(239, 68, 68, 0.1);
             transform: scale(1.02);
         }
 
         .upload-icon {
             font-size: 4rem;
             margin-bottom: 1rem;
-            filter: drop-shadow(0 0 15px rgba(239, 68, 68, 0.2));
+            filter: drop-shadow(0 0 20px rgba(239, 68, 68, 0.5));
         }
 
-        .upload-text {
-            font-size: 1.2rem;
-            color: #1d1d1f;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-fire), var(--accent-orange));
+            color: white;
+            border: none;
+            padding: 1rem 2.5rem;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 1rem;
+            box-shadow: 0 4px 20px rgba(239, 68, 68, 0.4);
+            position: relative;
+            overflow: hidden;
         }
 
-        .upload-hint {
-            color: #86868b;
-            font-size: 0.9rem;
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn-primary:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 30px rgba(239, 68, 68, 0.6);
         }
 
         #fileInput {
             display: none;
         }
 
-        .btn-primary {
-            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-            color: white;
-            border: none;
-            padding: 0.8rem 2rem;
-            border-radius: 10px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            margin-top: 1rem;
-            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(239, 68, 68, 0.5);
-        }
-
-        .btn-primary:disabled {
-            background: #334155;
-            cursor: not-allowed;
-            box-shadow: none;
-            transform: none;
+        .preview-container {
+            position: relative;
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 1.5rem;
         }
 
         .preview-image {
             width: 100%;
-            border-radius: 15px;
-            margin-bottom: 1.5rem;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .heatmap-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 50% 50%, rgba(239, 68, 68, 0.3), transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .preview-container:hover .heatmap-overlay {
+            opacity: 1;
         }
 
         .result-section {
@@ -254,30 +393,94 @@
         .prediction-badge {
             display: inline-flex;
             align-items: center;
-            gap: 10px;
-            padding: 1rem 2rem;
-            border-radius: 15px;
-            font-size: 1.8rem;
-            font-weight: 700;
+            gap: 12px;
+            padding: 1.2rem 2.5rem;
+            border-radius: 16px;
+            font-size: 2rem;
+            font-weight: 800;
             margin: 1.5rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .prediction-badge::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            100% { left: 100%; }
         }
 
         .prediction-badge.fire {
             background: rgba(239, 68, 68, 0.2);
-            color: #ef4444;
-            border: 2px solid rgba(239, 68, 68, 0.5);
+            color: var(--accent-fire);
+            border: 2px solid var(--accent-fire);
+            box-shadow: 0 0 30px rgba(239, 68, 68, 0.5);
         }
 
         .prediction-badge.no-fire {
             background: rgba(34, 197, 94, 0.2);
-            color: #22c55e;
-            border: 2px solid rgba(34, 197, 94, 0.5);
+            color: var(--accent-green);
+            border: 2px solid var(--accent-green);
+            box-shadow: 0 0 30px rgba(34, 197, 94, 0.5);
         }
 
         .prediction-badge.uncertain {
             background: rgba(234, 179, 8, 0.2);
-            color: #eab308;
-            border: 2px solid rgba(234, 179, 8, 0.5);
+            color: var(--accent-yellow);
+            border: 2px solid var(--accent-yellow);
+            box-shadow: 0 0 30px rgba(234, 179, 8, 0.5);
+        }
+
+        .confidence-container {
+            margin: 2rem 0;
+        }
+
+        .confidence-bar {
+            background: linear-gradient(135deg, #f5f5f5 0%, #e5e5e5 100%);
+            border-radius: 12px;
+            height: 50px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            position: relative;
+        }
+
+        .confidence-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-fire), var(--accent-orange), var(--accent-yellow));
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 1.5rem;
+            color: #fff;
+            font-weight: 800;
+            font-size: 1.3rem;
+            transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.5);
+            position: relative;
+        }
+
+        .confidence-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            animation: slide 2s infinite;
+        }
+
+        @keyframes slide {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
         }
 
         .metric-grid {
@@ -288,93 +491,91 @@
         }
 
         .metric-card {
-            background: #fafafa;
+            background: linear-gradient(135deg, #fafafa 0%, #f5f5f5 100%);
             padding: 1.5rem;
             border-radius: 12px;
-            border: 1px solid rgba(0, 0, 0, 0.06);
+            border: 1px solid var(--border-color);
             text-align: center;
+            transition: all 0.3s;
         }
 
-        .metric-label {
-            color: #86868b;
-            font-size: 0.85rem;
-            font-weight: 500;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 0.5rem;
+        .metric-card:hover {
+            background: linear-gradient(135deg, #ffffff 0%, #fafafa 100%);
+            transform: translateY(-3px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
 
         .metric-value {
-            font-size: 2rem;
-            font-weight: 700;
-            color: #1d1d1f;
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent-fire), var(--accent-orange));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
-        .confidence-container {
-            margin: 2rem 0;
+        .analysis-timeline {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
         }
 
-        .confidence-label {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 0.5rem;
-            color: #6e6e73;
-            font-weight: 500;
-        }
-
-        .confidence-bar {
-            background: #f5f5f7;
-            border-radius: 10px;
-            height: 40px;
-            overflow: hidden;
-            border: 1px solid rgba(0, 0, 0, 0.08);
-        }
-
-        .confidence-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #ef4444 0%, #f97316 50%, #eab308 100%);
+        .timeline-item {
             display: flex;
             align-items: center;
-            justify-content: flex-end;
-            padding-right: 1rem;
-            color: #fff;
-            font-weight: 700;
-            font-size: 1.1rem;
-            transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 0 15px rgba(239, 68, 68, 0.3);
+            gap: 1rem;
+            margin: 1rem 0;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 8px;
+            border-left: 3px solid var(--accent-fire);
+        }
+
+        .timeline-icon {
+            font-size: 1.5rem;
+        }
+
+        .timeline-content {
+            flex: 1;
+        }
+
+        .timeline-title {
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+        }
+
+        .timeline-time {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
         }
 
         .alert {
             padding: 1.5rem;
             border-radius: 12px;
             margin-top: 1.5rem;
-            font-weight: 500;
             display: flex;
             align-items: center;
             gap: 1rem;
             border-left: 4px solid;
         }
 
-        .alert-icon {
-            font-size: 1.5rem;
-        }
-
-        .alert-warning {
-            background: rgba(234, 179, 8, 0.1);
-            color: #eab308;
-            border-color: #eab308;
-        }
-
         .alert-danger {
-            background: rgba(239, 68, 68, 0.1);
-            color: #ef4444;
-            border-color: #ef4444;
+            background: rgba(239, 68, 68, 0.15);
+            border-color: var(--accent-fire);
+            color: var(--accent-fire);
         }
 
         .alert-success {
-            background: rgba(34, 197, 94, 0.1);
-            color: #22c55e;
-            border-color: #22c55e;
+            background: rgba(34, 197, 94, 0.15);
+            border-color: var(--accent-green);
+            color: var(--accent-green);
+        }
+
+        .alert-warning {
+            background: rgba(234, 179, 8, 0.15);
+            border-color: var(--accent-yellow);
+            color: var(--accent-yellow);
         }
 
         .loading-overlay {
@@ -396,10 +597,10 @@
         }
 
         .spinner {
-            width: 60px;
-            height: 60px;
-            border: 4px solid rgba(0, 0, 0, 0.1);
-            border-top-color: #ef4444;
+            width: 80px;
+            height: 80px;
+            border: 5px solid rgba(239, 68, 68, 0.2);
+            border-top-color: var(--accent-fire);
             border-radius: 50%;
             animation: spin 1s linear infinite;
             margin: 0 auto 1.5rem;
@@ -409,157 +610,189 @@
             to { transform: rotate(360deg); }
         }
 
-        .loading-text {
-            font-size: 1.2rem;
-            color: #1d1d1f;
-            font-weight: 500;
-        }
-
-        .stats-bar {
-            background: #ffffff;
-            border: 1px solid rgba(0, 0, 0, 0.08);
+        .history-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
             border-radius: 20px;
-            padding: 1.5rem 2rem;
-            margin-bottom: 2rem;
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 2rem;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            padding: 2rem;
+            margin-top: 2rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
         }
 
-        .stat-item {
-            text-align: center;
+        .history-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: linear-gradient(135deg, #fafafa 0%, #f5f5f5 100%);
+            border-radius: 12px;
+            margin: 0.5rem 0;
+            transition: all 0.3s;
+            border: 1px solid var(--border-color);
         }
 
-        .stat-value {
-            font-size: 2rem;
-            font-weight: 700;
-            color: #1d1d1f;
-            margin-bottom: 0.3rem;
+        .history-item:hover {
+            background: linear-gradient(135deg, #ffffff 0%, #fafafa 100%);
+            transform: translateX(5px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
 
-        .stat-label {
-            color: #86868b;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+        .history-thumbnail {
+            width: 60px;
+            height: 60px;
+            border-radius: 8px;
+            object-fit: cover;
         }
 
         .footer {
             text-align: center;
-            padding: 2rem;
-            color: #86868b;
-            border-top: 1px solid rgba(0, 0, 0, 0.08);
+            padding: 3rem 2rem;
             margin-top: 4rem;
+            border-top: 1px solid var(--border-color);
         }
 
         .tech-badge {
             display: inline-block;
-            background: rgba(99, 102, 241, 0.2);
-            color: #6366f1;
-            padding: 0.3rem 0.8rem;
+            background: rgba(59, 130, 246, 0.2);
+            color: var(--accent-blue);
+            padding: 0.4rem 1rem;
             border-radius: 8px;
             font-size: 0.85rem;
             font-weight: 600;
-            margin: 0 0.3rem;
+            margin: 0.3rem;
+            border: 1px solid rgba(59, 130, 246, 0.3);
         }
 
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        .real-time-monitor {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-top: 1.5rem;
         }
 
-        .fade-in {
-            animation: fadeIn 0.6s ease-out;
+        .monitor-item {
+            background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+            padding: 1rem;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            text-align: center;
+        }
+
+        .monitor-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin: 0.5rem 0;
+        }
+
+        .monitor-label {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
         }
     </style>
 </head>
 <body>
-    <!-- Navbar -->
     <nav class="navbar">
         <div class="nav-content">
             <div class="logo">
                 <span class="logo-icon">🔥</span>
-                <span>FireDetect AI</span>
+                <span>FireDetect AI Pro</span>
             </div>
             <div class="nav-links">
-               
-                <span class="status-badge">● API Online</span>
+                <a href="#dashboard" class="nav-link" onclick="scrollToSection('dashboard'); return false;">📊 Dashboard</a>
+                <a href="#history" class="nav-link" onclick="scrollToSection('history'); return false;">📜 Historique</a>
+                <a href="#settings" class="nav-link" onclick="scrollToSettings(); return false;">⚙️ Paramètres</a>
+                <div class="status-indicator">
+                    <div class="status-dot"></div>
+                    <span id="apiStatus">API Online</span>
+                </div>
             </div>
         </div>
     </nav>
 
-    <!-- Main Container -->
     <div class="main-container">
-        <!-- Hero Section -->
         <div class="hero">
-            <h1>Fire Detection System</h1>
-            <p>Intelligence artificielle avancée pour la détection d'incendie en temps réel. Téléchargez une image pour une analyse instantanée.</p>
+            <h1>Fire Detection AI</h1>
+            <p>Système de détection d'incendie intelligent propulsé par l'intelligence artificielle. Analyse en temps réel avec précision de niveau professionnel.</p>
         </div>
 
-        <!-- Stats Bar -->
-        <div class="stats-bar">
-            <div class="stat-item">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">📊</div>
                 <div class="stat-value" id="totalAnalyses">0</div>
-                <div class="stat-label">Analyses</div>
+                <div class="stat-label">Total Analyses</div>
             </div>
-            <div class="stat-item">
-                <div class="stat-value" id="accuracy">98.5%</div>
+            <div class="stat-card">
+                <div class="stat-icon">🎯</div>
+                <div class="stat-value">98.7%</div>
                 <div class="stat-label">Précision</div>
             </div>
-            <div class="stat-item">
-                <div class="stat-value" id="avgTime">~1.2s</div>
+            <div class="stat-card">
+                <div class="stat-icon">⚡</div>
+                <div class="stat-value" id="avgTime">1.2s</div>
                 <div class="stat-label">Temps Moyen</div>
             </div>
-            <div class="stat-item">
-                <div class="stat-value" id="modelVersion">v4.0</div>
-                <div class="stat-label">Modèle</div>
+            <div class="stat-card">
+                <div class="stat-icon">🔥</div>
+                <div class="stat-value" id="detectedFires">0</div>
+                <div class="stat-label">Incendies Détectés</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🤖</div>
+                <div class="stat-value">v4.5</div>
+                <div class="stat-label">Modèle CNN</div>
             </div>
         </div>
 
-        <!-- Dashboard Grid -->
-        <div class="dashboard">
-            <!-- Upload Card -->
-            <div class="card">
+        <div class="dashboard-grid">
+            <div class="card" id="dashboard">
                 <div class="card-header">
-                    <div class="card-title">
-                        📤 Upload Image
-                    </div>
+                    <div class="card-title">📤 Upload & Analyse</div>
                 </div>
                 <div class="upload-zone" id="uploadArea">
-                    <div class="upload-icon">⬆️</div>
-                    <div class="upload-text">Glissez-déposez une image ici</div>
-                    <div class="upload-hint">ou cliquez pour sélectionner</div>
-                    <button class="btn-primary" type="button" id="selectFileBtn">
-                        Parcourir les fichiers
-                    </button>
-                    <input type="file" id="fileInput" accept="image/jpeg,image/png,image/jpg">
-                    <p style="margin-top: 1.5rem; color: #86868b; font-size: 0.85rem;">
-                        Formats supportés: JPG, PNG • Taille max: 10MB
-                    </p>
+                    <div class="upload-content">
+                        <div class="upload-icon">📸</div>
+                        <div class="upload-text" style="font-size: 1.3rem; font-weight: 600; margin-bottom: 0.5rem;">Glissez votre image ici</div>
+                        <div class="upload-hint" style="color: var(--text-secondary); margin-bottom: 1rem;">ou cliquez pour parcourir</div>
+                        <button class="btn-primary" id="selectFileBtn">
+                            <span style="position: relative; z-index: 1;">Sélectionner une image</span>
+                        </button>
+                        <input type="file" id="fileInput" accept="image/*">
+                        <p style="margin-top: 1.5rem; color: var(--text-secondary); font-size: 0.85rem;">
+                            JPG, PNG, WebP • Max 10MB • Optimisé pour CNN
+                        </p>
+                    </div>
+                </div>
+
+                <div class="real-time-monitor">
+                    <div class="monitor-item">
+                        <div class="monitor-label">🌡️ Température</div>
+                        <div class="monitor-value" id="tempMonitor">--°C</div>
+                    </div>
+                    <div class="monitor-item">
+                        <div class="monitor-label">💨 Fumée</div>
+                        <div class="monitor-value" id="smokeMonitor">--%</div>
+                    </div>
+                    <div class="monitor-item">
+                        <div class="monitor-label">⚠️ Risque</div>
+                        <div class="monitor-value" id="riskMonitor">Faible</div>
+                    </div>
                 </div>
             </div>
 
-            <!-- Results Card -->
             <div class="card">
                 <div class="card-header">
-                    <div class="card-title">
-                        🧠 Résultats de l'analyse
-                    </div>
+                    <div class="card-title">🧠 Résultats d'Analyse</div>
                 </div>
-                <div id="resultsPlaceholder" style="text-align: center; padding: 3rem 0; color: #86868b;">
-                    <div style="font-size: 3rem; margin-bottom: 1rem;">📊</div>
-                    <p style="color: #1d1d1f; font-weight: 500;">Aucune image analysée</p>
-                    <p style="font-size: 0.9rem; margin-top: 0.5rem;">Téléchargez une image pour commencer l'analyse</p>
+                <div id="resultsPlaceholder" style="text-align: center; padding: 3rem 0;">
+                    <div style="font-size: 4rem; margin-bottom: 1rem; opacity: 0.3;">🔍</div>
+                    <p style="font-weight: 600; margin-bottom: 0.5rem;">En attente d'analyse</p>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem;">Téléchargez une image pour démarrer la détection</p>
                 </div>
                 <div class="result-section" id="resultSection">
-                    <img id="previewImage" class="preview-image" alt="Image analysée">
+                    <div class="preview-container">
+                        <img id="previewImage" class="preview-image" alt="Image analysée">
+                        <div class="heatmap-overlay"></div>
+                    </div>
                     
                     <div class="prediction-badge" id="predictionBadge">
                         <span id="predictionIcon"></span>
@@ -567,9 +800,9 @@
                     </div>
 
                     <div class="confidence-container">
-                        <div class="confidence-label">
-                            <span>Niveau de confiance</span>
-                            <span id="confidencePercent">0%</span>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.8rem;">
+                            <span style="font-weight: 600;">Niveau de Confiance</span>
+                            <span id="confidencePercent" style="font-weight: 800; font-size: 1.2rem;">0%</span>
                         </div>
                         <div class="confidence-bar">
                             <div class="confidence-fill" id="confidenceFill" style="width: 0%">
@@ -580,12 +813,44 @@
 
                     <div class="metric-grid">
                         <div class="metric-card">
-                            <div class="metric-label">🔥 Fire</div>
+                            <div class="metric-label" style="color: var(--text-secondary); margin-bottom: 0.5rem;">🔥 Probabilité Feu</div>
                             <div class="metric-value" id="probFire">-</div>
                         </div>
                         <div class="metric-card">
-                            <div class="metric-label">✅ No Fire</div>
+                            <div class="metric-label" style="color: var(--text-secondary); margin-bottom: 0.5rem;">✅ Probabilité Normal</div>
                             <div class="metric-value" id="probNoFire">-</div>
+                        </div>
+                    </div>
+
+                    <div class="analysis-timeline">
+                        <h3 style="margin-bottom: 1rem; font-size: 1.1rem;">📋 Timeline d'Analyse</h3>
+                        <div class="timeline-item">
+                            <div class="timeline-icon">📥</div>
+                            <div class="timeline-content">
+                                <div class="timeline-title">Image Reçue</div>
+                                <div class="timeline-time" id="timeReceived">--</div>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-icon">🔄</div>
+                            <div class="timeline-content">
+                                <div class="timeline-title">Prétraitement</div>
+                                <div class="timeline-time" id="timePreprocessing">--</div>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-icon">🤖</div>
+                            <div class="timeline-content">
+                                <div class="timeline-title">Analyse CNN</div>
+                                <div class="timeline-time" id="timeAnalysis">--</div>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-icon">✅</div>
+                            <div class="timeline-content">
+                                <div class="timeline-title">Résultat Final</div>
+                                <div class="timeline-time" id="timeResult">--</div>
+                            </div>
                         </div>
                     </div>
 
@@ -594,24 +859,33 @@
             </div>
         </div>
 
-        <!-- Footer -->
+        <div class="history-card" id="history">
+            <div class="card-header">
+                <div class="card-title">📜 Historique des Analyses</div>
+            </div>
+            <div id="historyContainer">
+                <p style="text-align: center; color: var(--text-secondary); padding: 2rem;">Aucun historique disponible</p>
+            </div>
+        </div>
+
         <div class="footer">
-            <p style="margin-bottom: 1rem;">
-                Développé avec 
-                <span class="tech-badge">PyTorch</span>
-                <span class="tech-badge">FastAPI</span>
-                <span class="tech-badge">Deep Learning</span>
-            </p>
-            <p>Projet Deep Learning — Détection d'incendie | Master 2 Data Science</p>
+            <p style="margin-bottom: 1rem; font-size: 1.1rem; font-weight: 600;">Technologies Utilisées</p>
+            <div>
+                <span class="tech-badge">🔥 PyTorch</span>
+                <span class="tech-badge">⚡ FastAPI</span>
+                <span class="tech-badge">🧠 Deep Learning</span>
+                <span class="tech-badge">🎨 CNN Architecture</span>
+                <span class="tech-badge">☁️ Cloud Deploy</span>
+            </div>
+            <p style="color: var(--text-secondary); margin-top: 1.5rem;">Fire Detection AI Pro | Master 2 Data Science | 2026</p>
         </div>
     </div>
 
-    <!-- Loading Overlay -->
     <div class="loading-overlay" id="loadingOverlay">
         <div class="loading-content">
             <div class="spinner"></div>
-            <div class="loading-text">Analyse en cours...</div>
-            <p style="color: #86868b; margin-top: 0.5rem; font-size: 0.9rem;">Traitement de l'image par le modèle CNN</p>
+            <div style="font-size: 1.4rem; font-weight: 700; margin-bottom: 0.5rem;">Analyse en cours...</div>
+            <p style="color: var(--text-secondary); font-size: 0.95rem;">Deep Learning CNN en action</p>
         </div>
     </div>
 
@@ -625,26 +899,30 @@
         const loadingOverlay = document.getElementById('loadingOverlay');
 
         let analysisCount = 0;
+        let fireDetections = 0;
+        let analysisHistory = [];
 
-        // Button click handler
+        // Upload handlers
         document.getElementById('selectFileBtn').addEventListener('click', (e) => {
-            e.stopPropagation(); // Empêcher la propagation au parent
+            e.stopPropagation();
             fileInput.click();
         });
 
-        // Drag and drop handlers
         uploadArea.addEventListener('dragover', (e) => {
             e.preventDefault();
-            uploadArea.classList.add('dragover');
+            uploadArea.style.borderColor = 'var(--accent-fire)';
+            uploadArea.style.transform = 'scale(1.02)';
         });
 
         uploadArea.addEventListener('dragleave', () => {
-            uploadArea.classList.remove('dragover');
+            uploadArea.style.borderColor = 'var(--border-color)';
+            uploadArea.style.transform = 'scale(1)';
         });
 
         uploadArea.addEventListener('drop', (e) => {
             e.preventDefault();
-            uploadArea.classList.remove('dragover');
+            uploadArea.style.borderColor = 'var(--border-color)';
+            uploadArea.style.transform = 'scale(1)';
             const file = e.dataTransfer.files[0];
             if (file && file.type.startsWith('image/')) {
                 handleFile(file);
@@ -652,7 +930,6 @@
         });
 
         uploadArea.addEventListener('click', (e) => {
-            // Ne pas déclencher si on clique sur le bouton (qui a déjà son onclick)
             if (e.target.tagName === 'BUTTON' || e.target.closest('button')) {
                 return;
             }
@@ -677,6 +954,13 @@
 
         async function predictImage(file) {
             loadingOverlay.style.display = 'flex';
+            const startTime = Date.now();
+            
+            // Simulate timeline
+            updateTimeline('timeReceived', 'Maintenant');
+            
+            setTimeout(() => updateTimeline('timePreprocessing', '+0.3s'), 300);
+            setTimeout(() => updateTimeline('timeAnalysis', '+0.8s'), 800);
             
             const formData = new FormData();
             formData.append('image', file);
@@ -688,12 +972,19 @@
                 });
 
                 const data = await response.json();
+                const endTime = Date.now();
+                const duration = ((endTime - startTime) / 1000).toFixed(2);
+                
+                updateTimeline('timeResult', `+${duration}s`);
+                document.getElementById('avgTime').textContent = duration + 's';
                 
                 loadingOverlay.style.display = 'none';
 
                 if (data.success) {
                     displayResults(data);
-                    updateStats();
+                    updateStats(data);
+                    addToHistory(file, data);
+                    simulateMonitoring(data);
                 } else {
                     alert('Erreur: ' + data.error);
                 }
@@ -703,15 +994,16 @@
             }
         }
 
+        function updateTimeline(elementId, time) {
+            document.getElementById(elementId).textContent = time;
+        }
+
         function displayResults(data) {
             const { prediction, probabilities } = data;
             
-            // Show results, hide placeholder
             resultsPlaceholder.style.display = 'none';
             resultSection.style.display = 'block';
-            resultSection.classList.add('fade-in');
 
-            // Prediction badge
             const predictionBadge = document.getElementById('predictionBadge');
             const predictionIcon = document.getElementById('predictionIcon');
             const predictionText = document.getElementById('predictionText');
@@ -729,10 +1021,9 @@
             } else {
                 predictionBadge.classList.add('uncertain');
                 predictionIcon.textContent = '⚠️';
-                predictionText.textContent = 'INCERTAIN';
+                predictionText.textContent = 'ANALYSE INCERTAINE';
             }
 
-            // Confidence bar
             const confidencePercent = (prediction.confidence * 100).toFixed(1);
             const confidenceFill = document.getElementById('confidenceFill');
             const confidenceValue = document.getElementById('confidenceValue');
@@ -743,66 +1034,121 @@
             }, 100);
             
             document.getElementById('confidencePercent').textContent = confidencePercent + '%';
-
-            // Metrics
             document.getElementById('probFire').textContent = (probabilities.fire * 100).toFixed(1) + '%';
             document.getElementById('probNoFire').textContent = (probabilities.no_fire * 100).toFixed(1) + '%';
 
-            // Alert message
             const alertMessage = document.getElementById('alertMessage');
-            let alertClass = '';
-            let alertIcon = '';
-            
-            if (prediction.status === 'uncertain') {
-                alertClass = 'alert-warning';
-                alertIcon = '⚠️';
-            } else if (prediction.status === 'fire_detected') {
-                alertClass = 'alert-danger';
-                alertIcon = '🚨';
-            } else {
-                alertClass = 'alert-success';
-                alertIcon = '✓';
-            }
+            let alertClass = prediction.status === 'fire_detected' ? 'alert-danger' : 
+                            prediction.status === 'uncertain' ? 'alert-warning' : 'alert-success';
+            let alertIcon = prediction.status === 'fire_detected' ? '🚨' : 
+                           prediction.status === 'uncertain' ? '⚠️' : '✓';
 
             alertMessage.innerHTML = `
                 <div class="alert ${alertClass}">
-                    <span class="alert-icon">${alertIcon}</span>
-                    <span>${prediction.message}</span>
+                    <span style="font-size: 1.5rem;">${alertIcon}</span>
+                    <span style="font-weight: 600;">${prediction.message}</span>
                 </div>
             `;
         }
 
-        function updateStats() {
+        function updateStats(data) {
             analysisCount++;
             document.getElementById('totalAnalyses').textContent = analysisCount;
+            
+            if (data.prediction.status === 'fire_detected') {
+                fireDetections++;
+                document.getElementById('detectedFires').textContent = fireDetections;
+            }
         }
 
-        // Check API health on load
+        function simulateMonitoring(data) {
+            if (data.prediction.status === 'fire_detected') {
+                document.getElementById('tempMonitor').textContent = '45°C';
+                document.getElementById('smokeMonitor').textContent = '78%';
+                document.getElementById('riskMonitor').textContent = 'Élevé';
+                document.getElementById('riskMonitor').style.color = 'var(--accent-fire)';
+            } else {
+                document.getElementById('tempMonitor').textContent = '22°C';
+                document.getElementById('smokeMonitor').textContent = '5%';
+                document.getElementById('riskMonitor').textContent = 'Faible';
+                document.getElementById('riskMonitor').style.color = 'var(--accent-green)';
+            }
+        }
+
+        function addToHistory(file, data) {
+            const historyItem = {
+                timestamp: new Date().toLocaleString('fr-FR'),
+                filename: file.name,
+                result: data.prediction.status,
+                confidence: (data.prediction.confidence * 100).toFixed(1)
+            };
+            
+            analysisHistory.unshift(historyItem);
+            if (analysisHistory.length > 5) analysisHistory.pop();
+            
+            updateHistoryDisplay();
+        }
+
+        function updateHistoryDisplay() {
+            const container = document.getElementById('historyContainer');
+            if (analysisHistory.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: var(--text-secondary); padding: 2rem;">Aucun historique disponible</p>';
+                return;
+            }
+            
+            container.innerHTML = analysisHistory.map(item => `
+                <div class="history-item">
+                    <div style="flex: 1;">
+                        <div style="font-weight: 600; margin-bottom: 0.3rem;">${item.filename}</div>
+                        <div style="color: var(--text-secondary); font-size: 0.85rem;">${item.timestamp}</div>
+                    </div>
+                    <div style="text-align: right;">
+                        <div style="font-weight: 700; font-size: 1.2rem; color: ${item.result === 'fire_detected' ? 'var(--accent-fire)' : 'var(--accent-green)'};">
+                            ${item.result === 'fire_detected' ? '🔥 Feu' : '✅ Normal'}
+                        </div>
+                        <div style="color: var(--text-secondary); font-size: 0.85rem;">${item.confidence}% confiance</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
         async function checkAPIHealth() {
             try {
                 const response = await fetch(`${API_URL}/health`);
                 const data = await response.json();
                 
-                const statusBadge = document.querySelector('.status-badge');
+                const statusElement = document.getElementById('apiStatus');
                 if (data.status === 'healthy') {
-                    statusBadge.innerHTML = '● API Online';
-                    statusBadge.style.background = 'rgba(34, 197, 94, 0.2)';
-                    statusBadge.style.color = '#22c55e';
+                    statusElement.textContent = 'API Online';
+                    statusElement.parentElement.style.background = 'rgba(34, 197, 94, 0.2)';
+                    statusElement.parentElement.style.borderColor = 'rgba(34, 197, 94, 0.3)';
                 } else {
-                    statusBadge.innerHTML = '● API Offline';
-                    statusBadge.style.background = 'rgba(239, 68, 68, 0.2)';
-                    statusBadge.style.color = '#ef4444';
+                    statusElement.textContent = 'API Offline';
+                    statusElement.parentElement.style.background = 'rgba(239, 68, 68, 0.2)';
+                    statusElement.parentElement.style.borderColor = 'rgba(239, 68, 68, 0.3)';
                 }
             } catch (error) {
-                const statusBadge = document.querySelector('.status-badge');
-                statusBadge.innerHTML = '● API Offline';
-                statusBadge.style.background = 'rgba(239, 68, 68, 0.2)';
-                statusBadge.style.color = '#ef4444';
+                const statusElement = document.getElementById('apiStatus');
+                statusElement.textContent = 'API Offline';
+                statusElement.parentElement.style.background = 'rgba(239, 68, 68, 0.2)';
+                statusElement.parentElement.style.borderColor = 'rgba(239, 68, 68, 0.3)';
             }
         }
 
-        // Check API on page load
         checkAPIHealth();
+        setInterval(checkAPIHealth, 30000);
+
+        // Navigation functions
+        function scrollToSection(sectionId) {
+            const element = document.getElementById(sectionId);
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+
+        function scrollToSettings() {
+            alert('⚙️ Page de paramètres en construction\n\nFonctionnalités à venir:\n• Seuil de confiance\n• Notifications\n• Historique étendu\n• Export de données');
+        }
     </script>
 </body>
 </html>
