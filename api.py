@@ -10,11 +10,11 @@ from model import CNN_Bottleneck
 
 app = FastAPI(title="Fire Detection API")
 
-# 🔴 CORRECTION CORS CRITIQUE
+# CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],        # OK
-    allow_credentials=False,    # ⬅️ OBLIGATOIRE
+    allow_origins=["*"],
+    allow_credentials=False,   # important pour GitHub Pages
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -25,7 +25,7 @@ model.load_state_dict(torch.load("fire_cnn_bottleneck.pth", map_location="cpu"))
 model.eval()
 
 transform = transforms.Compose([
-    transforms.Resize((224, 224)),   
+    transforms.Resize((224, 224)),
     transforms.ToTensor(),
     transforms.Normalize(
         mean=[0.485, 0.456, 0.406],
@@ -42,19 +42,43 @@ def root():
 @app.post("/predict")
 async def predict(image: UploadFile = File(...)):
     if not image.content_type.startswith("image/"):
-        raise HTTPException(status_code=400, detail="Image only")
+        raise HTTPException(status_code=400, detail="Image only (JPG, PNG)")
 
+    # Lecture et préparation de l'image
     image_bytes = await image.read()
     img = Image.open(io.BytesIO(image_bytes)).convert("RGB")
     img_tensor = transform(img).unsqueeze(0)
 
+    # Prédiction
     with torch.no_grad():
         outputs = model(img_tensor)
         probs = F.softmax(outputs, dim=1)
         confidence, pred = torch.max(probs, dim=1)
+    
+    confidence_value = float(confidence)
+    pred_class = int(pred)
+
+    # Détermination du statut selon les seuils
+    if confidence_value >= 0.85:
+        status = "fire_detected" if pred_class == 0 else "no_fire"
+        message = "🔥 Incendie détecté avec forte certitude !" if status == "fire_detected" else "✅ Aucun incendie détecté."
+    elif confidence_value >= 0.5:
+        status = "risk"
+        message = "⚠️ Risque d'incendie détecté, vigilance recommandée."
+    else:
+        status = "no_fire"
+        message = "✅ Probabilité faible d'incendie, situation normale."
+
+    # Conversion image en base64 (optionnel, utile pour affichage frontend)
+    buffered = io.BytesIO()
+    img.save(buffered, format="PNG")
+    img_str = base64.b64encode(buffered.getvalue()).decode()
 
     return {
         "success": True,
-        "class": labels[int(pred)],
-        "confidence": float(confidence)
+        "prediction": labels[pred_class],
+        "confidence": round(confidence_value, 4),
+        "status": status,
+        "message": message,
+        "image": f"data:image/png;base64,{img_str}"
     }
